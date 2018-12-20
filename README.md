@@ -1,3 +1,11 @@
+## This fork supports dublincore and prism namespaces in addition to master branch
+
+Some name mappings are made for dublincore and prism in order to have consistency among the different parsers, for instance 
+
+- `dc:identifier` is mapped to `id`
+- `dc:subject` is mapped to `categories` 
+- `prism:publicationDate` is mapped to `published``
+
 # react-native-rss-parser
 > React Native compatible RSS parser
 
@@ -79,6 +87,25 @@ return fetch('http://www.nasa.gov/rss/dyn/breaking_news.rss')
     subtitle: undefined,      // sub title of the channel
     summary: undefined,       // summary of the channel
   },
+  dc: {
+    title: undefined,         // dc:title
+    authors: [{
+      name: undefined         // dc:creator
+    }],
+    categories: [{
+      name: undefined         // dc:subject
+    }],
+    description: undefined,   // dc:description
+    language: undefined,      // dc:language
+    copyright: undefined,     // dc:rights
+    publisher: undefined,      // dc:publisher
+  },
+  prism: {
+    title: undefined,         // prism:publicationName
+    copyright: undefined,     // prism:copyright
+    eissn: undefined,         // prism:eissn
+    issn: undefined,          // prism:issn
+  },
   items: [{                   // list of items in the feed
     id: undefined,            // item id
     title: undefined,         // item title
@@ -113,6 +140,35 @@ return fetch('http://www.nasa.gov/rss/dyn/breaking_news.rss')
       order: undefined,       // item order number
       subtitle: undefined,    // item subtitle
       summary: undefined,     // item summary
+    },
+    dc: {
+      id: undefined,          // dc:identifier
+      title: undefined,       // dc:title
+      authors: [{
+        name: undefined       // dc:creator
+      }],
+      categories: [{
+        name: undefined       // dc:subject
+      }],
+      description: undefined, // dc:description
+      published: undefined,   // dc:date
+      contributors: [{        // dc:contributor
+        name: undefined
+      }],
+      format: undefined,      // dc:format
+      type: undefined         // dc:type
+    },
+    prism: {
+      published: undefined,        // prism:publicationDate
+      publicationName: undefined,  // prism:publicationName
+      issueIdentifier: undefined,  // prism:issueIdentifier
+      issueName: undefined,        // prism:issueName
+      coverDate: undefined,        // prism:coverDate
+      volume: undefined,           // prism:volume
+      section: undefined,          // prism:section
+      number: undefined,           // prism:number
+      startingPage: undefined,     // prism:startingPage
+      endingPage: undefined        // prism:endingPage
     }
   }]
 }

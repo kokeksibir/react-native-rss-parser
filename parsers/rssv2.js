@@ -2,6 +2,8 @@ var utils = require('./utils');
 var model = require('../model/rss');
 var namespaces = require('./namespaces');
 var itunesParser = require('./itunes');
+var dcParser = require('./dublincore');
+var prismParser = require('./prism');
 
 exports.parse = function(document) {
   let parsedFeed = Object.assign({}, model.rss);
@@ -33,6 +35,8 @@ function mapChannelFields(document, parsedFeed) {
   parsedFeed.categories = getChannelCategories(channelNode);
   parsedFeed.image = getChannelImage(channelNode);
   parsedFeed.itunes = itunesParser.parseChannel(channelNode);
+  parsedFeed.dc = dcParser.parseChannel(channelNode);
+  parsedFeed.prism = prismParser.parseChannel(channelNode);
 
   return parsedFeed;
 }
@@ -193,7 +197,9 @@ function mapItems(document) {
       categories: getItemCategories(item),
       published: getItemPublished(item),
       enclosures: getItemEnclosures(item),
-      itunes: itunesParser.parseItem(item)
+      itunes: itunesParser.parseItem(item),
+      dc: dcParser.parseItem(item),
+      prism: prismParser.parseItem(item)
     };
   });
 }
