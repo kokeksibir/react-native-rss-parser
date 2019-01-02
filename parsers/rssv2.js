@@ -124,6 +124,10 @@ function getItemTitle(node) {
   return utils.getElementTextContent(node, 'title');
 }
 
+function getItemImage(node) {
+  return utils.getElementTextContent(node, 'image');
+}
+
 function getItemLinks(node) {
   const links = utils.getChildElements(node, 'link');
 
@@ -193,6 +197,7 @@ function mapItems(document) {
       description: getItemDescription(item),
       content: getItemContent(item),
       id: getItemId(item),
+      imageUrl: getItemImage(item),
       authors: getItemAuthors(item),
       categories: getItemCategories(item),
       published: getItemPublished(item),
