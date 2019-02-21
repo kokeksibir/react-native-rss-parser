@@ -1,9 +1,15 @@
-exports.getElements = function(node, tagName) {
+exports.getElements = function(node, tagName, namespace) {
   if (!node || !node.getElementsByTagName(tagName)) {
     return [];
   }
 
-  let elements = node.getElementsByTagName(tagName);
+  let elements = namespace ?
+    node.getElementsByTagNameNS(namespace, tagName) :
+    node.getElementsByTagName(tagName);
+
+  if (!elements) {
+    return [];
+  }
 
   return Array.prototype.slice.call(elements);
 }

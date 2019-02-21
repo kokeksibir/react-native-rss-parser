@@ -1,4 +1,5 @@
 var DOMParser = require('xmldom').DOMParser;
+var namespaces = require('./parsers/namespaces');
 var rssV2Parser = require('./parsers/rssv2');
 var atomV1Parser = require('./parsers/atomv1');
 
@@ -23,9 +24,9 @@ exports.parse = function(feed) {
 };
 
 function getParser(document) {
-  let isRssSpecification = document.getElementsByTagName('channel')[0] !== undefined;
+  let isRssSpecification = (document.getElementsByTagName('channel')[0] !== undefined) || (document.getElementsByTagNameNS(namespaces.rss, 'channel')[0] !== undefined);
   let isAtomSpecification = document.getElementsByTagName('feed')[0] !== undefined;
-
+  
   if (isRssSpecification) {
     return rssV2Parser;
   }

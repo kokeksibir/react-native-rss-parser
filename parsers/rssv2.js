@@ -7,46 +7,46 @@ var prismParser = require('./prism');
 
 exports.parse = function(document) {
   let parsedFeed = Object.assign({}, model.rss);
-
-  parsedFeed = mapChannelFields(document, parsedFeed);
+  let namespace;
+  if(utils.getElements(document, 'channel', namespaces.rss)) namespace = namespaces.rss;
+  parsedFeed = mapChannelFields(document, namespace, parsedFeed);
   parsedFeed.type = 'rss-v2';
-  parsedFeed.items = mapItems(document);
+  parsedFeed.items = mapItems(document, namespace);
 
   return parsedFeed;
 };
 
-function mapChannelFields(document, parsedFeed) {
-  const channelNodes = utils.getElements(document, 'channel');
-
+function mapChannelFields(document, namespace, parsedFeed) {
+  const channelNodes = utils.getElements(document, 'channel', namespace);
   if (!channelNodes || channelNodes.length === 0) {
     throw new Error('Could not find channel node');
   }
 
   const channelNode = channelNodes[0];
 
-  parsedFeed.title = getChannelTitle(channelNode);
-  parsedFeed.links = getChannelLinks(channelNode);
-  parsedFeed.description = getChannelDescription(channelNode);
-  parsedFeed.language = getChannelLanguage(channelNode);
-  parsedFeed.copyright = getChannelCopyright(channelNode);
-  parsedFeed.authors = getChannelAuthors(channelNode);
-  parsedFeed.lastUpdated = getChannelLastUpdated(channelNode);
-  parsedFeed.lastPublished = getChannelLastPublished(channelNode);
-  parsedFeed.categories = getChannelCategories(channelNode);
-  parsedFeed.image = getChannelImage(channelNode);
-  parsedFeed.itunes = itunesParser.parseChannel(channelNode);
-  parsedFeed.dc = dcParser.parseChannel(channelNode);
-  parsedFeed.prism = prismParser.parseChannel(channelNode);
+  parsedFeed.title = getChannelTitle(channelNode, namespace);
+  parsedFeed.links = getChannelLinks(channelNode, namespace);
+  parsedFeed.description = getChannelDescription(channelNode, namespace);
+  parsedFeed.language = getChannelLanguage(channelNode, namespace);
+  parsedFeed.copyright = getChannelCopyright(channelNode, namespace);
+  parsedFeed.authors = getChannelAuthors(channelNode, namespace);
+  parsedFeed.lastUpdated = getChannelLastUpdated(channelNode, namespace);
+  parsedFeed.lastPublished = getChannelLastPublished(channelNode, namespace);
+  parsedFeed.categories = getChannelCategories(channelNode, namespace);
+  parsedFeed.image = getChannelImage(channelNode, namespace);
+  parsedFeed.itunes = itunesParser.parseChannel(channelNode, namespace);
+  parsedFeed.dc = dcParser.parseChannel(channelNode, namespace);
+  parsedFeed.prism = prismParser.parseChannel(channelNode, namespace);
 
   return parsedFeed;
 }
 
-function getChannelTitle(node) {
-  return utils.getElementTextContent(node, 'title');
+function getChannelTitle(node, namespace) {
+  return utils.getElementTextContent(node, 'title', namespace);
 }
 
-function getChannelLinks(node) {
-  const links = utils.getChildElements(node, 'link');
+function getChannelLinks(node, namespace) {
+  const links = utils.getChildElements(node, 'link', namespace);
 
   return links.map(function(link) {
     return {
@@ -56,20 +56,20 @@ function getChannelLinks(node) {
   });
 }
 
-function getChannelDescription(node) {
-  return utils.getElementTextContent(node, 'description');
+function getChannelDescription(node, namespace) {
+  return utils.getElementTextContent(node, 'description', namespace);
 }
 
-function getChannelLanguage(node) {
-  return utils.getElementTextContent(node, 'language');
+function getChannelLanguage(node, namespace) {
+  return utils.getElementTextContent(node, 'language', namespace);
 }
 
-function getChannelCopyright(node) {
-  return utils.getElementTextContent(node, 'copyright');
+function getChannelCopyright(node, namespace) {
+  return utils.getElementTextContent(node, 'copyright', namespace);
 }
 
-function getChannelAuthors(node) {
-  const authors = utils.getElementTextContentArray(node, 'managingEditor');
+function getChannelAuthors(node, namespace) {
+  const authors = utils.getElementTextContentArray(node, 'managingEditor', namespace);
 
   return authors.map(function(author) {
     return {
@@ -78,16 +78,16 @@ function getChannelAuthors(node) {
   });
 }
 
-function getChannelLastUpdated(node) {
-  return utils.getElementTextContent(node, 'lastBuildDate');
+function getChannelLastUpdated(node, namespace) {
+  return utils.getElementTextContent(node, 'lastBuildDate', namespace);
 }
 
-function getChannelLastPublished(node) {
-  return utils.getElementTextContent(node, 'pubDate');
+function getChannelLastPublished(node, namespace) {
+  return utils.getElementTextContent(node, 'pubDate', namespace);
 }
 
-function getChannelCategories(node) {
-  const categories = utils.getElementTextContentArray(node, 'category');
+function getChannelCategories(node, namespace) {
+  const categories = utils.getElementTextContentArray(node, 'category', namespace);
 
   return categories.map(function(category) {
     return {
@@ -96,8 +96,8 @@ function getChannelCategories(node) {
   });
 }
 
-function getChannelImage(node) {
-  const imageNodes = utils.getChildElements(node, 'image');
+function getChannelImage(node, namespace) {
+  const imageNodes = utils.getChildElements(node, 'image', namespace);
 
   if (imageNodes.length === 0) {
     return {
@@ -112,24 +112,24 @@ function getChannelImage(node) {
   const imageNode = imageNodes[0];
 
   return {
-    url: utils.getElementTextContent(imageNode, 'url'),
-    title: utils.getElementTextContent(imageNode, 'title'),
-    description: utils.getElementTextContent(imageNode, 'description'),
-    width: utils.getElementTextContent(imageNode, 'width'),
-    height: utils.getElementTextContent(imageNode, 'height'),
+    url: utils.getElementTextContent(imageNode, 'url', namespace),
+    title: utils.getElementTextContent(imageNode, 'title', namespace),
+    description: utils.getElementTextContent(imageNode, 'description', namespace),
+    width: utils.getElementTextContent(imageNode, 'width', namespace),
+    height: utils.getElementTextContent(imageNode, 'height', namespace),
   };
 }
 
-function getItemTitle(node) {
-  return utils.getElementTextContent(node, 'title');
+function getItemTitle(node, namespace) {
+  return utils.getElementTextContent(node, 'title', namespace);
 }
 
-function getItemImage(node) {
-  return utils.getElementTextContent(node, 'image');
+function getItemImage(node, namespace) {
+  return utils.getElementTextContent(node, 'image', namespace);
 }
 
-function getItemLinks(node) {
-  const links = utils.getChildElements(node, 'link');
+function getItemLinks(node, namespace) {
+  const links = utils.getChildElements(node, 'link', namespace);
 
   return links.map(function(link) {
     return {
@@ -139,16 +139,16 @@ function getItemLinks(node) {
   });
 }
 
-function getItemDescription(node) {
-  return utils.getElementTextContent(node, 'description');
+function getItemDescription(node, namespace) {
+  return utils.getElementTextContent(node, 'description', namespace);
 }
 
-function getItemContent(node) {
-  return utils.getElementTextContent(node, 'encoded', namespaces.content);
+function getItemContent(node, namespace) {
+  return utils.getElementTextContent(node, 'encoded', namespaces.content, namespace);
 }
 
-function getItemAuthors(node) {
-  const authors = utils.getElementTextContentArray(node, 'author');
+function getItemAuthors(node, namespace) {
+  const authors = utils.getElementTextContentArray(node, 'author', namespace);
 
   return authors.map(function(author) {
     return {
@@ -157,8 +157,8 @@ function getItemAuthors(node) {
   });
 }
 
-function getItemCategories(node) {
-  const categories = utils.getElementTextContentArray(node, 'category');
+function getItemCategories(node, namespace) {
+  const categories = utils.getElementTextContentArray(node, 'category', namespace);
 
   return categories.map(function(category) {
     return {
@@ -167,16 +167,16 @@ function getItemCategories(node) {
   });
 }
 
-function getItemId(node) {
-  return utils.getElementTextContent(node, 'guid');
+function getItemId(node, namespace) {
+  return utils.getElementTextContent(node, 'guid', namespace);
 }
 
-function getItemPublished(node) {
-  return utils.getElementTextContent(node, 'pubDate');
+function getItemPublished(node, namespace) {
+  return utils.getElementTextContent(node, 'pubDate', namespace);
 }
 
-function getItemEnclosures(node) {
-  const enclosures = utils.getChildElements(node, 'enclosure');
+function getItemEnclosures(node, namespace) {
+  const enclosures = utils.getChildElements(node, 'enclosure', namespace);
 
   return enclosures.map(function(enclosure) {
     return {
@@ -187,24 +187,24 @@ function getItemEnclosures(node) {
   });
 }
 
-function mapItems(document) {
-  const itemNodes = utils.getElements(document, 'item');
+function mapItems(document, namespace) {
+  const itemNodes = utils.getElements(document, 'item', namespace);
 
   return itemNodes.map(function(item) {
     return {
-      title: getItemTitle(item),
-      links: getItemLinks(item),
-      description: getItemDescription(item),
-      content: getItemContent(item),
-      id: getItemId(item),
-      imageUrl: getItemImage(item),
-      authors: getItemAuthors(item),
-      categories: getItemCategories(item),
-      published: getItemPublished(item),
-      enclosures: getItemEnclosures(item),
-      itunes: itunesParser.parseItem(item),
-      dc: dcParser.parseItem(item),
-      prism: prismParser.parseItem(item)
+      title: getItemTitle(item, namespace),
+      links: getItemLinks(item, namespace),
+      description: getItemDescription(item, namespace),
+      content: getItemContent(item, namespace),
+      id: getItemId(item, namespace),
+      imageUrl: getItemImage(item, namespace),
+      authors: getItemAuthors(item, namespace),
+      categories: getItemCategories(item, namespace),
+      published: getItemPublished(item, namespace),
+      enclosures: getItemEnclosures(item, namespace),
+      itunes: itunesParser.parseItem(item, namespace),
+      dc: dcParser.parseItem(item, namespace),
+      prism: prismParser.parseItem(item, namespace)
     };
   });
 }
