@@ -8,7 +8,7 @@ var prismParser = require('./prism');
 exports.parse = function(document) {
   let parsedFeed = Object.assign({}, model.rss);
   let namespace;
-  if(utils.getElements(document, 'channel', namespaces.rss)) namespace = namespaces.rss;
+  if(utils.getElements(document, 'channel', namespaces.rss).length > 0) namespace = namespaces.rss;
   parsedFeed = mapChannelFields(document, namespace, parsedFeed);
   parsedFeed.type = 'rss-v2';
   parsedFeed.items = mapItems(document, namespace);
